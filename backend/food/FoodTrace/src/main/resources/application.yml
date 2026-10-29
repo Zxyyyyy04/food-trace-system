@@ -1,0 +1,38 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: food-trace-system
+  # ?? Swagger2 ? Spring Boot 2.6+ ???????
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/food_trace_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.trace.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# ??? WeBASE ????
+webase:
+  front:
+    url: http://127.0.0.1:5002/WeBASE-Front/
+
+  test-accounts:
+    - name: Supplier
+      address: '0xc8d95843e76348ac85204e65b9230a9bfb6a9b55'
+      role: 1
+    - name: Distributor
+      address: '0x28255b6c2edf079cfa95aac26fe7db88a4923c33'
+      role: 2
+    - name: Retailer
+      address: '0x188aded2b4a211bae2b907125cd78d8860fa7e13'
+      role: 3

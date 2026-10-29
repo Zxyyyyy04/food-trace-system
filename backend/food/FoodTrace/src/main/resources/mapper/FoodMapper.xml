@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与对应的 Mapper 接口全限定名完全一致 -->
+<mapper namespace="com.trace.mapper.FoodMapper">
+
+    <!--
+      1. 插入新的食品信息
+      useGeneratedKeys="true" keyProperty="id": 插入后将数据库自增的主键 ID 回填到实体类的 id 属性中
+    -->
+    <insert id="insertFood" parameterType="FoodInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO food_info (
+            food_id,
+            food_name,
+            origin,
+            current_owner,
+            status,
+            create_time,
+            update_time
+        ) VALUES (
+                     #{foodId},
+                     #{foodName},
+                     #{origin},
+                     #{currentOwner},
+                     #{status},
+                     NOW(),
+                     NOW()
+                 )
+    </insert>
+
+    <!--
+      2. 更新食品的当前所有者与状态
+      当供应商发货、中间商送达时，需要修改食品的拥有者和状态
+    -->
+    <update id="updateOwnerAndStatus">
+        UPDATE food_info
+        SET
+            current_owner = #{newOwner},
+            status = #{status},
+            update_time = NOW()
+        WHERE food_id = #{foodId}
+    </update>
+
+    <!--
+      3. 根据溯源码查询食品详情
+      由于在 application.yml 中开启了 map-underscore-to-camel-case，数据库的 food_id 会自动映射为实体类的 foodId
+    -->
+    <select id="selectByFoodId" resultType="FoodInfo">
+        SELECT
+            id, food_id, food_name, origin, current_owner, status, create_time, update_time
+        FROM food_info
+        WHERE food_id = #{foodId}
+    </select>
+
+    <!--
+      4. 查询所有食品列表 (按创建时间倒序，首页展示用)
+    -->
+    <select id="selectAllFoods" resultType="FoodInfo">
+        SELECT
+            id, food_id, food_name, origin, current_owner, status, create_time, update_time
+        FROM food_info
+        ORDER BY create_time DESC
+    </select>
+
+    <!--
+      5. 插入一条溯源流转记录
+    -->
+    <!-- 插入溯源记录 -->
+    <insert id="insertTraceRecord" parameterType="TraceRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO trace_record (food_id, operator, role_type, action, location, remark, tx_time, tx_hash)
+        VALUES (#{foodId}, #{operator}, #{roleType}, #{action}, #{location}, #{remark}, #{txTime}, #{txHash})
+    </insert>
+
+    <!--
+      6. 查询某食品的完整溯源历史 (按交易时间正序排列，方便前端画时间轴)
+    -->
+    <select id="selectHistoryByFoodId" resultType="TraceRecord">
+        SELECT * FROM trace_record
+        WHERE food_id = #{foodId}
+        ORDER BY tx_time ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,29 @@
+# ====== 1. Java / Spring Boot 忽略项 ======
+target/
+*.jar
+*.war
+*.class
+logs/
+.mvn/
+mvnw
+mvnw.cmd
+
+# ====== 2. Vue / Node.js 忽略项 ======
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ====== 3. IDE 开发工具忽略项 ======
+.idea/
+*.iml
+.vscode/
+*.ipr
+*.iws
+
+# ====== 4. 操作系统与本地配置 ======
+.DS_Store
+Thumbs.db
+*.local

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 必须与对应的 Mapper 接口全限定名完全一致 -->
+<mapper namespace="com.trace.mapper.SysLogMapper">
+
+    <!--
+      插入系统操作审计日志
+      由 LogAspect (AOP切面) 自动调用，记录每一次请求的详细信息
+    -->
+    <insert id="insertLog" parameterType="SysOperationLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_operation_log (
+            operator_name,
+            operator_address,
+            request_url,
+            request_method,
+            request_params,
+            response_result,
+            cost_time,
+            client_ip,
+            create_time
+        ) VALUES (
+                     #{operatorName},
+                     #{operatorAddress},
+                     #{requestUrl},
+                     #{requestMethod},
+                     #{requestParams},
+                     #{responseResult},
+                     #{costTime},
+                     #{clientIp},
+                     NOW()
+                 )
+    </insert>
+
+</mapper>
